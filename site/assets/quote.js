@@ -18,46 +18,56 @@
 
   // Charged material rates (€/kg) already include handling and waste.
   // Densities in g/cm³. Technical data mirrors the 3D-WINDT material table.
+  // bars: relative ratings (0–100) within this line-up, derived from the
+  // 3D-WINDT material table (tensile strength, impact resistance, UV).
   const MATERIALS = [
     {
       id: 'pla', name: 'PLA', category: 'Standard', density: 1.24, pricePerKg: 39,
       tensile: '50–70 MPa', uv: 'Gering', props: 'Steif, maßhaltig, einfach — ideal für Optik & Konzept',
       uses: 'Prototypen, Anschauungsmodelle, Lehren',
+      bars: { strength: 65, impact: 20, uv: 20 },
     },
     {
       id: 'petg', name: 'PETG', category: 'Standard-Tech', density: 1.27, pricePerKg: 42,
       tensile: '40–55 MPa', uv: 'Mittel', props: 'Zäher Allrounder, witterungsbeständig',
       uses: 'Funktionsbauteile, Halterungen, Außenbereich',
+      bars: { strength: 50, impact: 50, uv: 50 },
     },
     {
       id: 'abs', name: 'ABS', category: 'Technisch', density: 1.04, pricePerKg: 49,
       tensile: '30–45 MPa', uv: 'Gering', props: 'Schlagfest, hitzebeständig, gut nachbearbeitbar',
       uses: 'Gehäuse, Automotive, mechanische Belastung',
+      bars: { strength: 40, impact: 75, uv: 20 },
     },
     {
       id: 'asa', name: 'ASA', category: 'Technisch', density: 1.07, pricePerKg: 55,
       tensile: '35–50 MPa', uv: 'Exzellent', props: 'Wie ABS, aber extrem UV- & witterungsbeständig',
       uses: 'Außenbauteile, Verkleidungen, Marine',
+      bars: { strength: 45, impact: 75, uv: 95 },
     },
     {
       id: 'tpu', name: 'TPU', category: 'Spezial', density: 1.21, pricePerKg: 69,
       tensile: '20–40 MPa', uv: 'Gut', props: 'Elastisch, gummiartig, extrem abriebfest',
       uses: 'Dichtungen, Dämpfer, Schutzkappen',
+      bars: { strength: 30, impact: 95, uv: 70 },
     },
     {
       id: 'pa', name: 'PA (Nylon)', category: 'Engineering', density: 1.14, pricePerKg: 89,
       tensile: '60–85 MPa', uv: 'Gut', props: 'Extrem zäh, abriebfest, geringe Reibung',
       uses: 'Zahnräder, Lager, Funktionsbauteile',
+      bars: { strength: 80, impact: 95, uv: 70 },
     },
     {
       id: 'pc', name: 'PC (Polycarbonat)', category: 'Engineering', density: 1.20, pricePerKg: 89,
       tensile: '60–75 MPa', uv: 'Gut', props: 'Extrem schlagfest, hohe Temperaturbeständigkeit',
       uses: 'Schutzabdeckungen, hochbelastete Gehäuse',
+      bars: { strength: 72, impact: 90, uv: 70 },
     },
     {
       id: 'petcf', name: 'PET-CF', category: 'High-Performance', density: 1.29, pricePerKg: 119,
       tensile: '70–90 MPa', uv: 'Exzellent', props: 'Carbonfaserverstärkt: extrem steif, leicht, maßhaltig',
       uses: 'Leichtbau, Drohnen, Motorsport, Strukturteile',
+      bars: { strength: 90, impact: 50, uv: 95 },
     },
   ];
 
@@ -600,11 +610,20 @@
         const q = computeQuote(state.analysis, { ...state, materialId: m.id });
         priceLine = `<p class="mat-price">${eur(q.unit)} / Stück</p>`;
       }
+      const meter = (label, pct) => `
+        <span class="mat-meter"><span class="mat-meter-label">${label}</span>
+          <span class="meter" role="img" aria-label="${label}: ${pct} von 100"><i style="width:${pct}%"></i></span>
+        </span>`;
       return `
         <button type="button" class="mat-card${active}" data-mat="${m.id}" role="radio" aria-checked="${active ? 'true' : 'false'}">
           <span class="mat-head"><strong>${esc(m.name)}</strong><span class="mat-cat">${esc(m.category)}</span></span>
-          <span class="mat-meta">Zugfestigkeit ${esc(m.tensile)} · UV ${esc(m.uv)}</span>
           <span class="mat-props">${esc(m.props)}</span>
+          <span class="mat-meters">
+            ${meter('Festigkeit', m.bars.strength)}
+            ${meter('Schlagzäh.', m.bars.impact)}
+            ${meter('UV', m.bars.uv)}
+          </span>
+          <span class="mat-meta">${esc(m.tensile)} · ${esc(m.uses)}</span>
           ${priceLine}
         </button>`;
     }).join('');

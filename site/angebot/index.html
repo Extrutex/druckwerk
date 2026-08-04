@@ -13,6 +13,8 @@
     <meta property="og:title" content="3D-Druck Sofort-Angebot – Richtpreis in Sekunden" />
     <meta property="og:description" content="Bauteil hochladen, Material wählen, Richtpreis sehen. Verbindliches Angebot in unter 24 h – vom Praktiker geprüft." />
     <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://druckwerk.netlify.app/assets/og.png" />
+    <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -78,20 +80,28 @@
         </div>
         <aside class="hero-card" aria-label="Warum hier anfragen">
           <h3>Warum hier?</h3>
-          <p>✓ Richtpreis sofort — ohne Datei-Upload zum Server</p>
-          <p>✓ 3D-Vorschau mit echtem Bauraum (350 × 350 × 300 mm)</p>
-          <p>✓ 8 Materialien: PLA bis carbonverstärktes PET-CF</p>
-          <p>✓ Technische Prüfung vor jeder Zusage</p>
-          <p>✓ Verbindliches Angebot in &lt; 24 h (werktags)</p>
+          <p class="icon-line"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.6-3 7.6-7 9-4-1.4-7-4.4-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>Richtpreis sofort — ohne Datei-Upload zum Server</p>
+          <p class="icon-line"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg>3D-Vorschau mit echtem Bauraum (350 × 350 × 300 mm)</p>
+          <p class="icon-line"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 4v2M12 18v2M4 12h2M18 12h2"/></svg>8 Materialien: PLA bis carbonverstärktes PET-CF</p>
+          <p class="icon-line"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8v3l-2 2v2.5h-4V9L8 7z"/><path d="M12 12v3"/><path d="M6 19h12M8 22h8"/></svg>Technische Prüfung vor jeder Zusage</p>
+          <p class="icon-line"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>Verbindliches Angebot in &lt; 24 h (werktags)</p>
         </aside>
       </section>
 
+      <div class="stat-strip glass" role="list" aria-label="Kennzahlen">
+        <div class="stat" role="listitem"><strong>8</strong><span>Industrie&shy;materialien</span></div>
+        <div class="stat" role="listitem"><strong>350³</strong><span>mm Bauraum</span></div>
+        <div class="stat" role="listitem"><strong>&lt; 24 h</strong><span>Antwort werktags</span></div>
+        <div class="stat" role="listitem"><strong>0 €</strong><span>Analyse &amp; Richtpreis</span></div>
+      </div>
+
       <section class="section glass" id="upload">
-        <h2>1. Bauteil hochladen</h2>
+        <h2><span class="step-num">1</span>Bauteil hochladen</h2>
         <p class="section-kicker">
           Sofort-Analyse: STL, 3MF, OBJ (max. 50 MB). STEP/STP prüfen wir manuell — Antwort in unter 24 h.
         </p>
         <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Datei hochladen: klicken oder Datei hierher ziehen">
+          <svg class="icon dz-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0L8 8m4-4l4 4"/><path d="M4 16v3a1 1 0 001 1h14a1 1 0 001-1v-3"/></svg>
           <p class="dz-title">Datei hierher ziehen oder klicken</p>
           <p class="dz-sub">STL · 3MF · OBJ · STEP — deine Datei bleibt auf deinem Gerät</p>
         </div>
@@ -102,7 +112,7 @@
 
       <div id="quoteStage" hidden>
         <section class="section glass">
-          <h2>2. Prüfen &amp; konfigurieren</h2>
+          <h2><span class="step-num">2</span>Prüfen &amp; konfigurieren</h2>
           <p class="section-kicker">Dreh dein Bauteil in der Vorschau — der Rahmen zeigt unseren echten Bauraum. Preis aktualisiert sich live.</p>
 
           <div id="analysisChips" class="chips" aria-live="polite"></div>
@@ -131,6 +141,12 @@
 
               <h3 class="quote-subhead">Lieferzeit</h3>
               <div id="speedOptions" class="speed-grid"></div>
+
+              <div class="tech-specs" aria-label="Fertigungs-Spezifikationen">
+                <span class="chip"><svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8v3l-2 2v2.5h-4V9L8 7z"/><path d="M12 12v3"/><path d="M6 19h12M8 22h8"/></svg>Düse 0,4 mm Standard · 0,6 / 0,8 auf Anfrage</span>
+                <span class="chip"><svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17h18M3 17v-3M8 17v-3M13 17v-3M18 17v-3"/><path d="M5 7l3-3 3 3M8 4v7"/></svg>Toleranz ±0,2 mm (FDM-typisch)</span>
+                <span class="chip"><svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16M6 20V9l6-5 6 5v11"/><path d="M10 20v-5h4v5"/></svg>Gewinde-Einsätze &amp; Nachbearbeitung auf Anfrage</span>
+              </div>
             </div>
 
             <aside class="calc-result glass quote-sticky" id="quoteResult" aria-live="polite"></aside>
@@ -138,7 +154,7 @@
         </section>
 
         <section class="section glass" id="anfrage">
-          <h2>3. Verbindliches Angebot anfordern</h2>
+          <h2><span class="step-num">3</span>Verbindliches Angebot anfordern</h2>
           <p class="section-kicker">
             Deine Konfiguration ist schon drin. Wir prüfen das Bauteil technisch und melden uns
             in der Regel <strong>unter 24 h</strong> (werktags) — mit einem Preis, der hält.
@@ -212,6 +228,33 @@
           </div>
         </section>
       </div>
+
+      <section class="section glass" id="ablauf">
+        <h2>So läuft dein Auftrag</h2>
+        <p class="section-kicker">Vom Upload bis zum Paket — vier Schritte, keine Überraschungen.</p>
+        <ol class="process-flow">
+          <li class="process-step">
+            <span class="process-icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0L8 8m4-4l4 4"/><path d="M4 16v3a1 1 0 001 1h14a1 1 0 001-1v-3"/></svg></span>
+            <h3>Upload &amp; Analyse</h3>
+            <p>Datei reinziehen, Richtpreis in Sekunden — die Geometrie bleibt in deinem Browser.</p>
+          </li>
+          <li class="process-step">
+            <span class="process-icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h2M10 12h10M4 18h10M18 18h2"/><circle cx="16" cy="6" r="2"/><circle cx="8" cy="12" r="2"/><circle cx="16" cy="18" r="2"/></svg></span>
+            <h3>Konfiguration</h3>
+            <p>Material, Schichthöhe, Füllung, Stückzahl, Lieferzeit — der Preis rechnet live mit.</p>
+          </li>
+          <li class="process-step">
+            <span class="process-icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6v3H9zM7 6h10a1 1 0 011 1v13a1 1 0 01-1 1H7a1 1 0 01-1-1V7a1 1 0 011-1z"/><path d="M9.5 14l2 2 3.5-4"/></svg></span>
+            <h3>Technische Prüfung</h3>
+            <p>Wandstärken, Toleranzen, Druckbarkeit — dann verbindliches Angebot in &lt; 24 h (werktags).</p>
+          </li>
+          <li class="process-step">
+            <span class="process-icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="18.5" r="1.8"/><circle cx="17" cy="18.5" r="1.8"/></svg></span>
+            <h3>Fertigung &amp; Versand</h3>
+            <p>Gefertigt auf der CoreXY-Flotte, qualitätsgeprüft, termintreu verschickt.</p>
+          </li>
+        </ol>
+      </section>
 
       <section class="section glass" id="vergleich">
         <h2>Sofortpreis-Portale gibt es viele. Das hier ist anders.</h2>
