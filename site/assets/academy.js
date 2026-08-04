@@ -148,7 +148,7 @@
           form_name: 'academy-lead',
         });
 
-        window.location.href = './thank-you.html';
+        window.location.href = '/danke/';
       } catch {
         if (errorNode) {
           errorNode.textContent =

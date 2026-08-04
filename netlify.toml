@@ -1,0 +1,17 @@
+# Netlify configuration for Druckwerk
+# Static site — no build step. Deploy the "site" directory as-is.
+
+[build]
+  publish = "site"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"

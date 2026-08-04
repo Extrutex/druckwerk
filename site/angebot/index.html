@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="de" data-ga-measurement-id="" data-site-id="druckwerk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>3D-Druck Sofort-Angebot – Bauteil hochladen, Richtpreis in Sekunden | Druckwerk</title>
+    <meta
+      name="description"
+      content="STL, 3MF oder OBJ hochladen und sofort den Richtpreis sehen – mit 3D-Vorschau im Browser. 8 Industriematerialien (PLA bis PET-CF), 350 mm Bauraum, verbindliches Angebot in unter 24 h. Deine Datei bleibt bis zur Anfrage auf deinem Gerät."
+    />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://druckwerk.netlify.app/angebot/" />
+    <meta property="og:title" content="3D-Druck Sofort-Angebot – Richtpreis in Sekunden" />
+    <meta property="og:description" content="Bauteil hochladen, Material wählen, Richtpreis sehen. Verbindliches Angebot in unter 24 h – vom Praktiker geprüft." />
+    <meta property="og:type" content="website" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Sora:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/assets/academy.css" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "name": "Industrieller 3D-Druck Service",
+        "serviceType": "FDM 3D printing service",
+        "provider": {
+          "@type": "LocalBusiness",
+          "name": "3D-Windt GbR",
+          "email": "support@3d-windt.de",
+          "telephone": "+49 1512 5534623",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Doktor-Weinholz-Straße 23",
+            "postalCode": "63110",
+            "addressLocality": "Rodgau",
+            "addressCountry": "DE"
+          }
+        },
+        "areaServed": "DE"
+      }
+    </script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="site-header glass">
+        <div class="brand">
+          <a href="/" style="text-decoration:none;color:inherit;">Druckwerk</a>
+          <small>Ehrlicher Preisrechner für den 3D-Druck</small>
+        </div>
+        <nav class="header-meta" aria-label="Hauptnavigation" style="gap:1.1rem;">
+          <a href="/angebot/" style="text-decoration:none;color:inherit;font-weight:600;" aria-current="page">Sofort-Angebot</a>
+          <a href="/#rechner" style="text-decoration:none;color:inherit;font-weight:600;">Kalkulator</a>
+          <a href="/pro" style="text-decoration:none;color:inherit;font-weight:600;">Pro-Kit</a>
+          <a href="/blog/" style="text-decoration:none;color:inherit;font-weight:600;">Blog</a>
+        </nav>
+      </header>
+
+      <section class="hero glass" id="top">
+        <div>
+          <span class="pill">Sofort-Richtpreis · Keine Registrierung</span>
+          <h1>Bauteil hochladen. <em>Preis sofort sehen.</em></h1>
+          <p class="sub">
+            STL, 3MF oder OBJ reinziehen — du bekommst in Sekunden Maße, Gewicht und einen
+            transparenten Richtpreis für 8 Industriematerialien. Die Analyse läuft komplett in
+            deinem Browser: <strong>deine CAD-Daten verlassen dein Gerät erst, wenn du anfragst.</strong>
+          </p>
+          <div class="cta-stack">
+            <a class="btn btn-primary" href="#upload" data-track-cta="quote_hero_upload">Datei hochladen</a>
+            <button class="btn btn-secondary" type="button" id="demoPart" data-track-cta="quote_demo">Beispielteil laden</button>
+          </div>
+          <p class="author-note">
+            Gefertigt von <strong>3D-WINDT</strong> — industrieller FDM-Druck aus Rodgau.
+            Zuverlässig. Technisch. Termintreu.
+          </p>
+        </div>
+        <aside class="hero-card" aria-label="Warum hier anfragen">
+          <h3>Warum hier?</h3>
+          <p>✓ Richtpreis sofort — ohne Datei-Upload zum Server</p>
+          <p>✓ 3D-Vorschau mit echtem Bauraum (350 × 350 × 300 mm)</p>
+          <p>✓ 8 Materialien: PLA bis carbonverstärktes PET-CF</p>
+          <p>✓ Technische Prüfung vor jeder Zusage</p>
+          <p>✓ Verbindliches Angebot in &lt; 24 h (werktags)</p>
+        </aside>
+      </section>
+
+      <section class="section glass" id="upload">
+        <h2>1. Bauteil hochladen</h2>
+        <p class="section-kicker">
+          Sofort-Analyse: STL, 3MF, OBJ (max. 50 MB). STEP/STP prüfen wir manuell — Antwort in unter 24 h.
+        </p>
+        <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Datei hochladen: klicken oder Datei hierher ziehen">
+          <p class="dz-title">Datei hierher ziehen oder klicken</p>
+          <p class="dz-sub">STL · 3MF · OBJ · STEP — deine Datei bleibt auf deinem Gerät</p>
+        </div>
+        <input type="file" id="fileInput" accept=".stl,.3mf,.obj,.step,.stp" class="hidden-form-field" aria-hidden="true" tabindex="-1" />
+        <p id="uploadStatus" class="upload-status" role="status" aria-live="polite"></p>
+        <p id="uploadError" class="form-error" role="alert" aria-live="polite"></p>
+      </section>
+
+      <div id="quoteStage" hidden>
+        <section class="section glass">
+          <h2>2. Prüfen &amp; konfigurieren</h2>
+          <p class="section-kicker">Dreh dein Bauteil in der Vorschau — der Rahmen zeigt unseren echten Bauraum. Preis aktualisiert sich live.</p>
+
+          <div id="analysisChips" class="chips" aria-live="polite"></div>
+
+          <div class="quote-layout">
+            <div class="quote-left">
+              <div id="quoteViewer" class="quote-viewer" aria-label="3D-Vorschau des Bauteils"></div>
+
+              <h3 class="quote-subhead">Material</h3>
+              <div id="materialCards" class="mat-grid" role="radiogroup" aria-label="Material wählen"></div>
+
+              <div class="quote-options">
+                <div class="calc-field">
+                  <label for="qualitySelect">Schichthöhe / Qualität</label>
+                  <select id="qualitySelect"></select>
+                </div>
+                <div class="calc-field">
+                  <label for="infillSelect">Füllung</label>
+                  <select id="infillSelect"></select>
+                </div>
+                <div class="calc-field">
+                  <label for="qtyInput">Stückzahl</label>
+                  <input id="qtyInput" type="number" min="1" step="1" value="1" inputmode="numeric" />
+                </div>
+              </div>
+
+              <h3 class="quote-subhead">Lieferzeit</h3>
+              <div id="speedOptions" class="speed-grid"></div>
+            </div>
+
+            <aside class="calc-result glass quote-sticky" id="quoteResult" aria-live="polite"></aside>
+          </div>
+        </section>
+
+        <section class="section glass" id="anfrage">
+          <h2>3. Verbindliches Angebot anfordern</h2>
+          <p class="section-kicker">
+            Deine Konfiguration ist schon drin. Wir prüfen das Bauteil technisch und melden uns
+            in der Regel <strong>unter 24 h</strong> (werktags) — mit einem Preis, der hält.
+          </p>
+
+          <div class="form-wrap">
+            <form
+              name="quote-request"
+              method="POST"
+              data-netlify="true"
+              data-netlify-honeypot="bot-field"
+              id="quoteForm"
+              enctype="multipart/form-data"
+            >
+              <input type="hidden" name="form-name" value="quote-request" />
+              <p class="hidden-form-field">
+                <label>Nicht ausfüllen: <input name="bot-field" /></label>
+              </p>
+              <input type="hidden" name="summary" id="quoteSummaryField" />
+              <input type="hidden" name="file_note" />
+
+              <div class="form-grid">
+                <div class="form-field">
+                  <label for="q_name">Name *</label>
+                  <input id="q_name" name="name" type="text" required autocomplete="name" />
+                </div>
+                <div class="form-field">
+                  <label for="q_company">Firma</label>
+                  <input id="q_company" name="company" type="text" autocomplete="organization" />
+                </div>
+                <div class="form-field">
+                  <label for="q_email">E-Mail *</label>
+                  <input id="q_email" name="email" type="email" required autocomplete="email" />
+                </div>
+                <div class="form-field">
+                  <label for="q_phone">Telefon (für Rückfragen)</label>
+                  <input id="q_phone" name="phone" type="tel" autocomplete="tel" />
+                </div>
+                <div class="form-field form-full">
+                  <label for="q_message">Anforderungen (Toleranzen, Einsatz, Termin …)</label>
+                  <textarea id="q_message" name="message" rows="4"></textarea>
+                </div>
+                <div class="form-field form-full">
+                  <label for="quoteFileInput">Datei anhängen (bis 8 MB — größere Dateien senden wir dir per E-Mail-Link nach)</label>
+                  <input id="quoteFileInput" name="file" type="file" accept=".stl,.3mf,.obj,.step,.stp" />
+                </div>
+                <div class="form-field form-full">
+                  <label for="quoteSummaryPreview">Deine Konfiguration (wird mitgesendet)</label>
+                  <pre id="quoteSummaryPreview" class="summary-preview"></pre>
+                </div>
+                <div class="form-field form-full consent-row">
+                  <label>
+                    <input type="checkbox" name="consent" required />
+                    Ich bin einverstanden, dass meine Angaben zur Bearbeitung der Anfrage
+                    verarbeitet werden. Hinweise in der <a href="/datenschutz">Datenschutzerklärung</a>.
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button class="btn btn-primary" type="submit" data-track-checkout="quote_submit">
+                  Angebot anfordern
+                </button>
+                <a class="btn btn-secondary" id="quoteMailto" href="mailto:support@3d-windt.de" data-track-cta="quote_mailto">
+                  Anfrage per E-Mail
+                </a>
+                <span class="form-note">Vertraulich. Deine CAD-Daten werden nur zur Angebots­erstellung genutzt.</span>
+              </div>
+              <p id="quoteFormError" class="form-error" role="alert" aria-live="polite"></p>
+            </form>
+          </div>
+        </section>
+      </div>
+
+      <section class="section glass" id="vergleich">
+        <h2>Sofortpreis-Portale gibt es viele. Das hier ist anders.</h2>
+        <p class="section-kicker">Kein anonymer Upload-Automat, sondern eine echte Werkstatt mit CoreXY-Flotte — und ein Rechner, der dir nichts verkauft, was nicht druckbar ist.</p>
+        <div class="grid-2">
+          <article class="module">
+            <span>Datenschutz</span>
+            <h3>Analyse ohne Server-Upload</h3>
+            <p>Andere Portale laden deine Konstruktionsdaten sofort auf ihre Server. Hier läuft die komplette Geometrie-Analyse im Browser — die Datei geht erst raus, wenn du wirklich anfragst.</p>
+          </article>
+          <article class="module">
+            <span>Transparenz</span>
+            <h3>Nachvollziehbarer Preis</h3>
+            <p>Material, Maschinenzeit, Rüstpauschale, Mengenrabatt — jeder Posten steht einzeln da. Kein Blackbox-Preis, den niemand erklären kann.</p>
+          </article>
+          <article class="module">
+            <span>Technik</span>
+            <h3>Prüfung vom Praktiker</h3>
+            <p>Vor jeder Zusage prüfen wir Wandstärken, Toleranzen und Druckbarkeit. Wenn etwas nicht sinnvoll druckbar ist, sagen wir es dir — inklusive Alternative.</p>
+          </article>
+          <article class="module">
+            <span>Maschinenpark</span>
+            <h3>Echte Industrie-Hardware</h3>
+            <p>CoreXY-Flotte mit 350 × 350 × 300 mm Bauraum, Materialien von PLA bis carbonfaserverstärktem PET-CF. Größere Teile fertigen wir geteilt und gefügt — frag einfach an.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section glass" id="faq">
+        <h2>FAQ</h2>
+        <div class="faq-list">
+          <details class="faq-item">
+            <summary>Ist der Sofortpreis verbindlich?</summary>
+            <p>Nein — er ist ein ehrlicher Richtpreis auf Basis von Geometrie, Material und Maschinenzeit. Verbindlich wird es nach unserer technischen Prüfung, in der Regel innerhalb von 24 Stunden (werktags). Böse Überraschungen gibt es dabei nicht: Der Richtpreis rechnet bewusst realistisch, nicht schöngerechnet.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Welche Dateiformate kann ich hochladen?</summary>
+            <p>Sofort-Analyse: STL (binär und ASCII), 3MF und OBJ bis 50 MB. STEP/STP nehmen wir übers Formular oder per E-Mail an und prüfen manuell — ideal, wenn Maßhaltigkeit kritisch ist.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Was passiert mit meinen CAD-Daten?</summary>
+            <p>Die Analyse läuft vollständig in deinem Browser. Erst mit dem Absenden der Anfrage werden Datei und Konfiguration übertragen — und ausschließlich zur Angebotserstellung und Fertigung genutzt. Vertraulichkeitsvereinbarung auf Wunsch.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Mein Teil ist größer als 350 mm — geht das trotzdem?</summary>
+            <p>Meistens ja: Wir teilen die Geometrie konstruktiv sinnvoll und fügen die Segmente (Verklebung, Verschraubung, Schwalbenschwanz). Schick die Datei einfach mit einer kurzen Beschreibung.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Welches Material soll ich nehmen?</summary>
+            <p>Als Faustregel: PETG für den Alltag, ASA für draußen, PA für Mechanik, PC für Hitze, TPU für elastisch, PET-CF für steif und leicht. Im Zweifel: Einsatzzweck ins Anfrageformular schreiben — Materialberatung ist bei uns Teil des Angebots, keine Extraleistung.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Gibt es einen Mindestbestellwert?</summary>
+            <p>Ja, 39 € netto pro Auftrag. Darunter lohnt sich industrielle Fertigung mit Prüfung und Qualitätssicherung schlicht nicht — das sagen wir lieber vorher als hinterher.</p>
+          </details>
+        </div>
+      </section>
+
+      <footer>
+        <p>Druckwerk — Der ehrliche Preisrechner für den 3D-Druck. Fertigung: <a href="https://3d-windt.de/">3D-WINDT</a>.</p>
+        <nav class="legal-nav" aria-label="Rechtliches">
+          <a href="/angebot/">Sofort-Angebot</a>
+          <a href="/#rechner">Kalkulator</a>
+          <a href="/blog/">Blog</a>
+          <a href="/pro">Pro-Kit</a>
+          <a href="/impressum">Impressum</a>
+          <a href="/datenschutz">Datenschutz</a>
+          <a href="/cookies">Cookies</a>
+          <a href="/widerruf">Widerruf</a>
+          <a href="/agb">AGB</a>
+        </nav>
+      </footer>
+    </main>
+
+    <!-- Printable quote sheet (visible only when printing) -->
+    <div id="printQuote" class="print-quote" aria-hidden="true"></div>
+
+    <aside class="cookie-banner" id="cookieBanner" role="dialog" aria-live="polite" aria-label="Cookie-Einstellungen">
+      <p>Diese Website nutzt optionale Analyse-Cookies. Du kannst zustimmen oder ablehnen.</p>
+      <div class="cookie-actions">
+        <button type="button" class="btn btn-primary" id="cookieAccept">Analyse erlauben</button>
+        <button type="button" class="btn btn-secondary" id="cookieReject">Nur notwendig</button>
+      </div>
+    </aside>
+
+    <script src="/assets/vendor/three.min.js" defer></script>
+    <script src="/assets/vendor/OrbitControls.js" defer></script>
+    <script src="/assets/academy.js" defer></script>
+    <script src="/assets/quote.js" defer></script>
+  </body>
+</html>
