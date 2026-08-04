@@ -201,7 +201,7 @@
   }
 
   // Minimal ZIP reader (enough for 3MF): central directory + deflate-raw.
-  async function unzipEntry(buffer, matcher) {
+  async function unzipMatching(buffer, matcher) {
     const view = new DataView(buffer);
     const bytes = new Uint8Array(buffer);
     // Locate End Of Central Directory record.
@@ -213,6 +213,7 @@
     const count = view.getUint16(eocd + 10, true);
     let ptr = view.getUint32(eocd + 16, true);
     const decoder = new TextDecoder();
+    const results = [];
     for (let n = 0; n < count; n++) {
       if (view.getUint32(ptr, true) !== 0x02014b50) throw new Error('3MF/ZIP: defekter Eintrag.');
       const method = view.getUint16(ptr + 10, true);
@@ -229,56 +230,167 @@
       const lExtraLen = view.getUint16(localOffset + 28, true);
       const dataStart = localOffset + 30 + lNameLen + lExtraLen;
       const raw = bytes.subarray(dataStart, dataStart + compSize);
-      if (method === 0) return raw.slice().buffer;
-      if (method === 8) {
+      let data;
+      if (method === 0) {
+        data = raw.slice().buffer;
+      } else if (method === 8) {
         if (typeof DecompressionStream === 'undefined') {
           throw new Error('Dein Browser kann 3MF nicht entpacken — bitte STL hochladen.');
         }
         const ds = new DecompressionStream('deflate-raw');
         const stream = new Blob([raw]).stream().pipeThrough(ds);
-        return await new Response(stream).arrayBuffer();
+        data = await new Response(stream).arrayBuffer();
+      } else {
+        throw new Error('3MF/ZIP: nicht unterstützte Kompression.');
       }
-      throw new Error('3MF/ZIP: nicht unterstützte Kompression.');
+      results.push({ name: '/' + name.replace(/^\//, ''), data });
     }
-    throw new Error('3MF: kein Modell in der Datei gefunden.');
+    return results;
   }
 
   const UNIT_TO_MM = {
     micron: 0.001, millimeter: 1, centimeter: 10, inch: 25.4, foot: 304.8, meter: 1000,
   };
 
+  // 3MF transform: 12 numbers, row vectors — x' = x*t0 + y*t3 + z*t6 + t9 etc.
+  function parseTransform(str) {
+    if (!str) return null;
+    const t = str.trim().split(/\s+/).map(parseFloat);
+    return t.length === 12 && t.every(Number.isFinite) ? t : null;
+  }
+
+  function composeTransform(a, b) {
+    // Returns transform equivalent to applying b first, then a.
+    if (!a) return b;
+    if (!b) return a;
+    const r = new Array(12);
+    for (let col = 0; col < 3; col++) {
+      r[0 + col] = b[0] * a[0 + col] + b[1] * a[3 + col] + b[2] * a[6 + col];
+      r[3 + col] = b[3] * a[0 + col] + b[4] * a[3 + col] + b[5] * a[6 + col];
+      r[6 + col] = b[6] * a[0 + col] + b[7] * a[3 + col] + b[8] * a[6 + col];
+      r[9 + col] = b[9] * a[0 + col] + b[10] * a[3 + col] + b[11] * a[6 + col] + a[9 + col];
+    }
+    return r;
+  }
+
+  function applyTransform(t, x, y, z) {
+    if (!t) return [x, y, z];
+    return [
+      x * t[0] + y * t[3] + z * t[6] + t[9],
+      x * t[1] + y * t[4] + z * t[7] + t[10],
+      x * t[2] + y * t[5] + z * t[8] + t[11],
+    ];
+  }
+
+  // Handles plain 3MF as well as production-extension packages (BambuStudio,
+  // OrcaSlicer, PrusaSlicer): meshes may live in referenced sub-model files and
+  // are placed via <component>/<item> transforms, which must be applied for
+  // volume and dimensions to be correct.
   async function parse3MF(buffer) {
-    const xmlBuf = await unzipEntry(buffer, (name) => name.toLowerCase().endsWith('.model'));
-    const xml = new DOMParser().parseFromString(new TextDecoder().decode(xmlBuf), 'application/xml');
-    if (xml.querySelector('parsererror')) throw new Error('3MF: XML fehlerhaft.');
-    const model = xml.querySelector('model');
-    const scale = UNIT_TO_MM[(model && model.getAttribute('unit')) || 'millimeter'] || 1;
-    const meshes = xml.querySelectorAll('object > mesh');
-    if (!meshes.length) throw new Error('3MF enthält kein Netz (nur Verweise?).');
+    const entries = await unzipMatching(buffer, (n) => n.toLowerCase().endsWith('.model'));
+    if (!entries.length) throw new Error('3MF: kein Modell in der Datei gefunden.');
+
+    const objects = new Map(); // "path#id" -> {mesh:{vs,tris}} | {components:[...]}
+    let rootPath = null;
+    let buildItems = [];
+
+    for (const entry of entries) {
+      const xml = new DOMParser().parseFromString(new TextDecoder().decode(entry.data), 'application/xml');
+      if (xml.querySelector('parsererror')) throw new Error('3MF: XML fehlerhaft (' + entry.name + ').');
+      const model = xml.querySelector('model');
+      const scale = UNIT_TO_MM[(model && model.getAttribute('unit')) || 'millimeter'] || 1;
+
+      xml.querySelectorAll('resources > object').forEach((obj) => {
+        const id = obj.getAttribute('id');
+        const mesh = obj.querySelector('mesh');
+        if (mesh) {
+          const vs = [];
+          mesh.querySelectorAll('vertices > vertex').forEach((vx) => {
+            vs.push([
+              parseFloat(vx.getAttribute('x')) * scale,
+              parseFloat(vx.getAttribute('y')) * scale,
+              parseFloat(vx.getAttribute('z')) * scale,
+            ]);
+          });
+          const tris = [];
+          mesh.querySelectorAll('triangles > triangle').forEach((tr) => {
+            tris.push([
+              parseInt(tr.getAttribute('v1'), 10),
+              parseInt(tr.getAttribute('v2'), 10),
+              parseInt(tr.getAttribute('v3'), 10),
+            ]);
+          });
+          if (tris.length) objects.set(entry.name + '#' + id, { mesh: { vs, tris } });
+          return;
+        }
+        const comps = [];
+        obj.querySelectorAll('components > component').forEach((c) => {
+          comps.push({
+            path: c.getAttribute('p:path')
+              || c.getAttributeNS('http://schemas.microsoft.com/3dmanufacturing/production/2015/06', 'path')
+              || entry.name,
+            id: c.getAttribute('objectid'),
+            transform: parseTransform(c.getAttribute('transform')),
+          });
+        });
+        if (comps.length) objects.set(entry.name + '#' + id, { components: comps });
+      });
+
+      const items = xml.querySelectorAll('build > item');
+      if (items.length) {
+        rootPath = entry.name;
+        items.forEach((it) => {
+          buildItems.push({
+            path: it.getAttribute('p:path')
+              || it.getAttributeNS('http://schemas.microsoft.com/3dmanufacturing/production/2015/06', 'path')
+              || entry.name,
+            id: it.getAttribute('objectid'),
+            transform: parseTransform(it.getAttribute('transform')),
+          });
+        });
+      }
+    }
+
+    // Fallback: no build section — take every mesh object as-is.
+    if (!buildItems.length) {
+      buildItems = [...objects.keys()]
+        .filter((k) => objects.get(k).mesh)
+        .map((k) => ({ path: k.split('#')[0], id: k.split('#')[1], transform: null }));
+    }
+
     const chunks = [];
     let triTotal = 0;
-    meshes.forEach((mesh) => {
-      const vs = [];
-      mesh.querySelectorAll('vertices > vertex').forEach((vx) => {
-        vs.push([
-          parseFloat(vx.getAttribute('x')) * scale,
-          parseFloat(vx.getAttribute('y')) * scale,
-          parseFloat(vx.getAttribute('z')) * scale,
-        ]);
+
+    function resolve(path, id, transform, depth) {
+      if (depth > 12) return; // cycle guard
+      const key = (path || rootPath) + '#' + id;
+      const obj = objects.get(key);
+      if (!obj) return;
+      if (obj.mesh) {
+        const { vs, tris } = obj.mesh;
+        const positions = new Float32Array(tris.length * 9);
+        for (let i = 0; i < tris.length; i++) {
+          for (let j = 0; j < 3; j++) {
+            const p = vs[tris[i][j]];
+            if (!p) throw new Error('3MF: Dreiecks-Index außerhalb des Bereichs.');
+            const q = applyTransform(transform, p[0], p[1], p[2]);
+            positions[i * 9 + j * 3] = q[0];
+            positions[i * 9 + j * 3 + 1] = q[1];
+            positions[i * 9 + j * 3 + 2] = q[2];
+          }
+        }
+        triTotal += tris.length;
+        chunks.push(positions);
+        return;
+      }
+      obj.components.forEach((c) => {
+        resolve(c.path, c.id, composeTransform(transform, c.transform), depth + 1);
       });
-      const tris = mesh.querySelectorAll('triangles > triangle');
-      const positions = new Float32Array(tris.length * 9);
-      let i = 0;
-      tris.forEach((tr) => {
-        ['v1', 'v2', 'v3'].forEach((a, j) => {
-          const p = vs[parseInt(tr.getAttribute(a), 10)];
-          positions.set(p, i * 9 + j * 3);
-        });
-        i++;
-      });
-      triTotal += tris.length;
-      chunks.push(positions);
-    });
+    }
+
+    buildItems.forEach((it) => resolve(it.path, it.id, it.transform, 0));
+
+    if (!triTotal) throw new Error('3MF enthält kein druckbares Netz.');
     const positions = new Float32Array(triTotal * 9);
     let off = 0;
     chunks.forEach((c) => { positions.set(c, off); off += c.length; });
@@ -421,7 +533,10 @@
     }
     animate();
 
-    return { scene, camera, controls, mesh: null };
+    const instance = { scene, camera, controls, renderer, mesh: null };
+    // Debug/testing hook: render one frame on demand (rAF pauses in hidden tabs).
+    window.druckwerkViewer = instance;
+    return instance;
   }
 
   function showMesh(positions) {
@@ -455,6 +570,9 @@
     const dist = Math.max(220, radius * 2.1);
     viewer.camera.position.set(dist, -dist * 0.85, dist * 0.75);
     viewer.controls.target.set(0, 0, (bb.max.z - bb.min.z) / 2);
+    // Render one frame immediately — the rAF loop is paused in hidden tabs.
+    viewer.controls.update();
+    viewer.renderer.render(viewer.scene, viewer.camera);
   }
 
   // ---------------------------------------------------------------------------
