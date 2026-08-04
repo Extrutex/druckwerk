@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="de" data-ga-measurement-id="" data-site-id="druckwerk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Druckwerk – Ehrlicher 3D-Druck Preisrechner | Kosten & Angebot berechnen</title>
+    <meta
+      name="description"
+      content="Kostenloser 3D-Druck Preisrechner: Berechne in 30 Sekunden den fairen Preis für deinen Druckauftrag – inklusive Filament, Strom, Abschreibung, Verschleiß, Arbeitszeit und Fehldruck-Quote."
+    />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://druckwerk.netlify.app/" />
+    <meta property="og:title" content="Druckwerk – Ehrlicher 3D-Druck Preisrechner" />
+    <meta property="og:description" content="Berechne den fairen Preis für deinen 3D-Druck – mit allen Kosten, die andere vergessen." />
+    <meta property="og:type" content="website" />
+    <link rel="alternate" type="application/rss+xml" title="Druckwerk Blog" href="/blog/rss.xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Sora:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/assets/academy.css" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Druckwerk 3D-Druck Preisrechner",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" }
+      }
+    </script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="site-header glass">
+        <div class="brand">
+          <a href="/" style="text-decoration:none;color:inherit;">Druckwerk</a>
+          <small>Ehrlicher Preisrechner für den 3D-Druck</small>
+        </div>
+        <nav class="header-meta" aria-label="Hauptnavigation" style="gap:1.1rem;">
+          <a href="#rechner" style="text-decoration:none;color:inherit;font-weight:600;">Rechner</a>
+          <a href='/pro' style='text-decoration:none;color:inherit;font-weight:600;'>Pro-Kit</a>
+          <a href="/blog/" style="text-decoration:none;color:inherit;font-weight:600;">Blog</a>
+          <a href="#starter" style="text-decoration:none;color:inherit;font-weight:600;">Gratis-Spickzettel</a>
+        </nav>
+      </header>
+
+      <section class="hero glass" id="top">
+        <div>
+          <span class="pill">Kostenlos · Keine Anmeldung</span>
+          <h1>Was kostet dein 3D-Druck <em>wirklich</em>?</h1>
+          <p class="sub">
+            Die meisten verkaufen unter Wert, weil sie Abschreibung, Verschleiß, Arbeitszeit und
+            Fehldruck-Quote vergessen. Dieser Rechner nicht — er rechnet mit echten
+            Werkstatt-Zahlen, nicht mit Affiliate-Theorie. Trag deine Werte ein und bekomm in
+            30&nbsp;Sekunden einen Preis, der sich wirklich lohnt.
+          </p>
+          <div class="cta-stack">
+            <a class="btn btn-primary" href="#rechner" data-track-cta="hero_to_calc">Jetzt Preis berechnen</a>
+            <a class="btn btn-secondary" href="#starter" data-track-cta="hero_to_lead">Gratis-Spickzettel</a>
+          </div>
+          <p class="author-note">
+            Entwickelt von einem Praktiker, der seit den <strong>RepRap-Tagen</strong> druckt —
+            mit Industriebezug und aus einem Familienbetrieb. Keine Theorie, echte Werkstatt.
+          </p>
+        </div>
+        <aside class="hero-card" aria-label="Was der Rechner einrechnet">
+          <h3>Was viele vergessen</h3>
+          <p>✓ Maschinen-Abschreibung pro Druckstunde</p>
+          <p>✓ Verschleiß (Düsen, Riemen, Wartung)</p>
+          <p>✓ Deine eigene Arbeitszeit</p>
+          <p>✓ Fehldruck-Quote als Risiko-Aufschlag</p>
+          <p>✓ Marge, von der du leben kannst</p>
+        </aside>
+      </section>
+
+      <section class="section glass" id="rechner">
+        <h2>3D-Druck Preisrechner</h2>
+        <p class="section-kicker">Alle Felder sind vorbelegt. Pass sie an deinen Drucker und Auftrag an – das Ergebnis aktualisiert sich live.</p>
+
+        <div class="calc-layout">
+          <form id="calcForm" class="calc-form" autocomplete="off">
+            <fieldset class="calc-group">
+              <legend>Material</legend>
+              <div class="calc-field">
+                <label for="filamentPrice">Filament-Preis (€/kg)</label>
+                <input id="filamentPrice" type="number" min="0" step="0.01" value="22" inputmode="decimal" />
+              </div>
+              <div class="calc-field">
+                <label for="grams">Materialverbrauch (g)</label>
+                <input id="grams" type="number" min="0" step="0.1" value="50" inputmode="decimal" />
+              </div>
+              <div class="calc-field">
+                <label for="wastePct">Abfall / Stützmaterial (%)</label>
+                <input id="wastePct" type="number" min="0" step="1" value="5" inputmode="decimal" />
+              </div>
+            </fieldset>
+
+            <fieldset class="calc-group">
+              <legend>Maschine &amp; Energie</legend>
+              <div class="calc-field">
+                <label for="hours">Druckzeit (Stunden)</label>
+                <input id="hours" type="number" min="0" step="0.1" value="4" inputmode="decimal" />
+              </div>
+              <div class="calc-field">
+                <label for="powerW">Leistungsaufnahme (W)</label>
+                <input id="powerW" type="number" min="0" step="1" value="150" inputmode="decimal" />
+              </div>
+              <div class="calc-field">
+                <label for="kwhPrice">Strompreis (€/kWh)</label>
+                <input id="kwhPrice" type="number" min="0" step="0.01" value="0.35" inputmode="decimal" />
+              </div>
+              <div class="calc-field">
+                <label for="machinePrice">Drucker-Anschaffung (€)</label>
+                <input id="machinePrice" type="number" min="0" step="1" value="800" inputmode="decimal" />
+              </div>
+              <div class="calc-field">
+                <label for="lifetimeHours">Erwartete Lebensdauer (Druckstunden)</label>
+                <input id="lifetimeHours" type="number" min="1" step="100" value="5000" inputmode="decimal" />
+              </div>
+              <div class="calc-field">
+                <label for="maintPerHour">Wartung/Verschleiß (€/Stunde)</label>
+                <input id="maintPerHour" type="number" min="0" step="0.01" value="0.10" inputmode="decimal" />
+              </div>
+            </fieldset>
+
+            <fieldset class="calc-group">
+              <legend>Arbeit</legend>
+              <div class="calc-field">
+                <label for="laborMin">Vorbereitung + Nachbearbeitung (Min.)</label>
+                <input id="laborMin" type="number" min="0" step="1" value="20" inputmode="decimal" />
+              </div>
+              <div class="calc-field">
+                <label for="laborRate">Dein Stundensatz (€/h)</label>
+                <input id="laborRate" type="number" min="0" step="1" value="25" inputmode="decimal" />
+              </div>
+            </fieldset>
+
+            <fieldset class="calc-group">
+              <legend>Risiko, Marge &amp; Menge</legend>
+              <div class="calc-field">
+                <label for="failurePct">Fehldruck-Quote (%)</label>
+                <input id="failurePct" type="number" min="0" step="1" value="8" inputmode="decimal" />
+              </div>
+              <div class="calc-field">
+                <label for="marginPct">Gewinnmarge (%)</label>
+                <input id="marginPct" type="number" min="0" step="1" value="30" inputmode="decimal" />
+              </div>
+              <div class="calc-field">
+                <label for="qty">Stückzahl</label>
+                <input id="qty" type="number" min="1" step="1" value="1" inputmode="numeric" />
+              </div>
+              <div class="calc-field calc-check">
+                <label>
+                  <input id="vatOn" type="checkbox" />
+                  Brutto inkl. MwSt. anzeigen
+                </label>
+                <input id="vatPct" type="number" min="0" step="1" value="19" inputmode="decimal" aria-label="MwSt-Satz in Prozent" />
+              </div>
+            </fieldset>
+
+            <div class="form-actions">
+              <button class="btn btn-secondary" type="reset" id="calcReset">Zurücksetzen</button>
+            </div>
+          </form>
+
+          <aside class="calc-result glass" id="calcResult" aria-live="polite">
+            <!-- per JS gefüllt -->
+          </aside>
+        </div>
+      </section>
+
+      <section class="section glass" id="warum">
+        <h2>Warum die meisten 3D-Drucker unter Wert verkaufen</h2>
+        <p class="section-kicker">Drei Denkfehler, die dich bares Geld kosten – aus der Werkstatt, nicht aus dem Affiliate-Video.</p>
+        <div class="grid-2">
+          <article class="module">
+            <span>Fehler 1</span>
+            <h3>Nur Filament zählen</h3>
+            <p>„20&nbsp;g PLA, also 50&nbsp;Cent." Strom, Abschreibung und Verschleiß werden ignoriert – dabei machen sie oft mehr aus als das Material selbst.</p>
+          </article>
+          <article class="module">
+            <span>Fehler 2</span>
+            <h3>Eigene Zeit verschenken</h3>
+            <p>Slicen, Druckbett vorbereiten, Stützen entfernen, schleifen, verpacken. Diese Stunden sind echte Kosten. Wer sie nicht einrechnet, arbeitet gratis.</p>
+          </article>
+          <article class="module">
+            <span>Fehler 3</span>
+            <h3>Fehldrucke ausblenden</h3>
+            <p>Jeder dritte bis zehnte Druck geht schief. Wenn die Fehldruck-Quote nicht im Preis steckt, zahlst du jeden misslungenen Druck aus eigener Tasche.</p>
+          </article>
+          <article class="module">
+            <span>Die Lösung</span>
+            <h3>Ehrlich kalkulieren</h3>
+            <p>Der Rechner oben rechnet alles ein und schlägt eine Marge auf, von der du leben kannst. Kein Bauchgefühl, sondern eine Zahl, die du verteidigen kannst.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section glass" id="pro-teaser">
+        <h2>Für echte Kundenaufträge: das Pro-Kit</h2>
+        <p class="section-kicker">Wenn aus dem Hobby ein Nebenverdienst wird, brauchst du mehr als einen Rechner.</p>
+        <div class="offer-grid">
+          <article class="offer-card">
+            <div class="offer-title">
+              <h3>Gratis-Rechner</h3>
+              <span class="price">0 €</span>
+            </div>
+            <ul>
+              <li>Vollständige Kostenkalkulation im Browser</li>
+              <li>Live-Aufschlüsselung aller Posten</li>
+              <li>Druckbares Angebot als PDF</li>
+            </ul>
+            <div class="cta-stack">
+              <a class="btn btn-secondary" href="#rechner" data-track-cta="teaser_free">Rechner nutzen</a>
+            </div>
+          </article>
+          <article class="offer-card featured">
+            <div class="offer-title">
+              <h3>Druckwerk Pro-Kit</h3>
+              <span class="price">19 €</span>
+            </div>
+            <ul>
+              <li>Kalkulations-Vorlage (Excel &amp; Google Sheets) für mehrere Drucker</li>
+              <li>Fertige Angebots- &amp; Rechnungs-Templates für Kunden</li>
+              <li>Guide: „So kalkulierst du 3D-Druck-Aufträge richtig"</li>
+              <li>Preislisten-Vorlage für Standard-Drucke</li>
+            </ul>
+            <div class="cta-stack">
+              <a class='btn btn-primary' data-track-checkout='pro' data-track-cta='teaser_pro' href='/pro'>Pro-Kit ansehen</a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section glass" id="starter">
+        <h2>Gratis: 3D-Druck Kalkulations-Spickzettel</h2>
+        <p class="section-kicker">
+          Die wichtigsten Formeln und Faustregeln auf einer Seite. Trag deine E-Mail ein – du bekommst den Spickzettel und ab und zu eine ehrliche Werkstatt-Notiz.
+        </p>
+
+        <div class="form-wrap">
+          <form
+            name="academy-lead"
+            method="POST"
+            data-netlify="true"
+            data-netlify-honeypot="bot-field"
+            id="academyLeadForm"
+          >
+            <input type="hidden" name="form-name" value="academy-lead" />
+            <p class="hidden-form-field">
+              <label>Nicht ausfüllen: <input name="bot-field" /></label>
+            </p>
+
+            <div class="form-grid">
+              <div class="form-field">
+                <label for="lead_name">Name</label>
+                <input id="lead_name" name="name" type="text" placeholder="Vorname genügt" />
+              </div>
+              <div class="form-field">
+                <label for="lead_email">E-Mail *</label>
+                <input id="lead_email" name="email" type="email" required />
+              </div>
+              <div class="form-field form-full consent-row">
+                <label>
+                  <input type="checkbox" name="consent" required />
+                  Ich möchte den Spickzettel und gelegentliche Tipps per E-Mail erhalten. Abmeldung jederzeit.
+                </label>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button class="btn btn-primary" type="submit" data-track-checkout="lead_submit">
+                Spickzettel gratis holen
+              </button>
+              <span class="form-note">Kein Spam. Abmeldung mit einem Klick.</span>
+            </div>
+            <p id="academyFormError" class="form-error" role="alert" aria-live="polite"></p>
+          </form>
+        </div>
+      </section>
+
+      <section class="section glass" id="faq">
+        <h2>FAQ</h2>
+        <div class="faq-list">
+          <details class="faq-item">
+            <summary>Ist der Rechner wirklich kostenlos?</summary>
+            <p>Ja. Der Rechner läuft komplett in deinem Browser, ohne Anmeldung. Deine Eingaben verlassen dein Gerät nicht.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Woher kommen die Standardwerte?</summary>
+            <p>Es sind realistische Richtwerte für einen typischen FDM-Drucker. Pass sie unbedingt an deinen Drucker, dein Material und deinen Stromtarif an.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Wie berechne ich die Lebensdauer meines Druckers?</summary>
+            <p>Schätze, wie viele Druckstunden dein Gerät hält, bevor größere Reparaturen oder ein Neukauf anstehen. 3.000–8.000 Stunden sind ein üblicher Bereich. Lieber konservativ schätzen.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Brauche ich für den Verkauf ein Gewerbe?</summary>
+            <p>Sobald du regelmäßig mit Gewinnerzielungsabsicht verkaufst, ja – in Deutschland meist als Kleinunternehmer. Informiere dich für deinen Einzelfall; das hier ist keine Rechtsberatung.</p>
+          </details>
+        </div>
+      </section>
+
+      <footer>
+        <p>Druckwerk — Der ehrliche Preisrechner für den 3D-Druck.</p>
+        <nav class="legal-nav" aria-label="Rechtliches">
+          <a href="#rechner">Rechner</a>
+          <a href="/blog/">Blog</a>
+          <a href='/pro'>Pro-Kit</a>
+          <a href='/impressum'>Impressum</a>
+          <a href='/datenschutz'>Datenschutz</a>
+          <a href='/cookies'>Cookies</a>
+          <a href='/widerruf'>Widerruf</a>
+          <a href='/agb'>AGB</a>
+        </nav>
+      </footer>
+    </main>
+
+    <!-- Druckbares Angebot (nur beim Drucken sichtbar) -->
+    <div id="printQuote" class="print-quote" aria-hidden="true"></div>
+
+    <aside class="cookie-banner" id="cookieBanner" role="dialog" aria-live="polite" aria-label="Cookie-Einstellungen">
+      <p>Diese Website nutzt optionale Analyse-Cookies. Du kannst zustimmen oder ablehnen.</p>
+      <div class="cookie-actions">
+        <button type="button" class="btn btn-primary" id="cookieAccept">Analyse erlauben</button>
+        <button type="button" class="btn btn-secondary" id="cookieReject">Nur notwendig</button>
+      </div>
+    </aside>
+
+    <script src="/assets/academy.js" defer></script>
+    <script src="/assets/calc.js" defer></script>
+  </body>
+</html>
